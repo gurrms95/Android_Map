@@ -129,16 +129,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void polylineButtonClicked(View view) {
 
+        double earthRadius = 3958.75;
+        double dLat = Math.toRadians(myLocation_find.latitude-onLocation_lost.latitude);
+        double dLng = Math.toRadians(myLocation_find.longitude-onLocation_lost.longitude);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(Math.toRadians(onLocation_lost.latitude)) * Math.cos(Math.toRadians(myLocation_find.latitude)) * Math.sin(dLng/2) * Math.sin(dLng/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double distance = earthRadius * c*1000.0;
+        String meter = String.format("%.2f", distance);
+
         Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
                 .clickable(true)
                 .add(
                         new LatLng(myLocation_find.latitude, myLocation_find.longitude),
                         new LatLng(onLocation_lost.latitude, onLocation_lost.longitude)));
 
-//        myLocation_find.
-//        double distance = polyline1.getLength
-//
-//        polyline1.setTag("직선 거리는"+ meter+"미터 입니다.");
+        polyline1.setTag(meter);
 
         // Flip from solid stroke to dotted stroke pattern.
         if ((polyline1.getPattern() == null) || (!polyline1.getPattern().contains(DOT))) {
@@ -148,7 +153,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             polyline1.setPattern(null);
         }
 
-        Toast.makeText(this, "Route type " + polyline1.getTag().toString(),
+        Toast.makeText(this, "직선 거리는"+ polyline1.getTag().toString()+"미터 입니다.",
                 Toast.LENGTH_SHORT).show();
     }
 }
