@@ -17,15 +17,29 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Dash;
+import com.google.android.gms.maps.model.Dot;
+import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PatternItem;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private static final int REQUEST_CODE_PERMISSIONS = 1000;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
+    private LatLng myLocation_find;
+    private LatLng onLocation_lost;
+
+    private static final PatternItem DOT = new Dot();
+    private static final List<PatternItem> PATTERN_POLYLINE_DOTTED = Arrays.asList(DOT);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +89,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onSuccess(Location location) {
                 if(location!= null){
-                    LatLng myLocation = new LatLng(location.getLatitude(),location.getLongitude());
+                    LatLng onLocation = new LatLng(location.getLatitude(),location.getLongitude());
+                    onLocation_lost= onLocation;
+
                     mMap.addMarker(new MarkerOptions()
-                    .position(myLocation)
-                    .title("현재 위치"));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
+                    .position(onLocation)
+                    .title("조난자 위치"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(onLocation));
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
                 }
 
@@ -99,4 +115,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+    public void myLocationButtonClicked(View view) {
+        // Add a marker in Sydney and move the camera
+        LatLng myLocation = new LatLng(36.624342, 127.465913);
+        myLocation_find= myLocation;
+        mMap.addMarker(new MarkerOptions()
+                .position(myLocation)
+                .title("조난자 위치"));
+        mMap.addMarker(new MarkerOptions().position(myLocation).title(""));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
+    }
+
+    public void polylineButtonClicked(View view) {
+
+        Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
+                .clickable(true)
+                .add(
+                        new LatLng(myLocation_find.latitude, myLocation_find.longitude),
+                        new LatLng(onLocation_lost.latitude, onLocation_lost.longitude)));
+
+//        myLocation_find.
+//        double distance = polyline1.getLength
+//
+//        polyline1.setTag("직선 거리는"+ meter+"미터 입니다.");
+
+        // Flip from solid stroke to dotted stroke pattern.
+        if ((polyline1.getPattern() == null) || (!polyline1.getPattern().contains(DOT))) {
+            polyline1.setPattern(PATTERN_POLYLINE_DOTTED);
+        } else {
+            // The default pattern is a solid stroke.
+            polyline1.setPattern(null);
+        }
+
+        Toast.makeText(this, "Route type " + polyline1.getTag().toString(),
+                Toast.LENGTH_SHORT).show();
+    }
 }

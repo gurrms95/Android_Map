@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <Button
+        android:id="@+id/onLast_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:onClick="onLastLocationButtonClicked"
-        android:text="현재위치"/>
+        android:text="조난자 위치" />
 
-
+    <Button
+        android:id="@+id/myLocation_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/onLast_button"
+        android:onClick="myLocationButtonClicked"
+        android:text="구조자 위치" />
+    <Button
+        android:id="@+id/Poly_line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/myLocation_button"
+        android:onClick="polylineButtonClicked"
+        android:text="직선 거리" />
 
     <fragment
         android:id="@+id/map"
@@ -19,4 +35,4 @@
         android:layout_height="match_parent"
         tools:context=".MapsActivity" />
 
-</FrameLayout>
+</RelativeLayout>
