@@ -46,11 +46,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
     }
 
     /**
@@ -126,8 +126,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
     }
-
-    public void polylineButtonClicked(View view) {
+    public double polyline_meter(){
 
         double earthRadius = 3958.75;
         double dLat = Math.toRadians(myLocation_find.latitude-onLocation_lost.latitude);
@@ -135,6 +134,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(Math.toRadians(onLocation_lost.latitude)) * Math.cos(Math.toRadians(myLocation_find.latitude)) * Math.sin(dLng/2) * Math.sin(dLng/2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         double distance = earthRadius * c*1000.0;
+
+        return distance;
+    }
+
+    public void polylineButtonClicked(View view) {
+
+        double distance = polyline_meter();
         String meter = String.format("%.2f", distance);
 
         Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
