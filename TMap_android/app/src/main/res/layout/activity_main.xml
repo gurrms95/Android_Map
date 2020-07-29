@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/onLast_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:onClick="onLastLocationButtonClicked"
-        android:text="현위치" />
-
     <LinearLayout
         android:id="@+id/linearLayoutTmap"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"/>
+        android:orientation="vertical">
+    </LinearLayout>
 
+    <Button
+        android:id="@+id/onLast_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:onClick="onLastLocationButtonClicked"
+        android:text="현위치" />
+    <Button
+        android:id="@+id/testbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="testbutton"
+        android:text="T맵 확인"/>
 
-
-
-</android.widget.LinearLayout>
+</RelativeLayout>
