@@ -15,6 +15,7 @@ import android.util.Log;
 
 public class GpsTracker extends Service implements LocationListener {
 
+
     private final Context mContext;
     Location location;
     double latitude;

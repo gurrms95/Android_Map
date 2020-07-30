@@ -6,6 +6,8 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
@@ -27,8 +29,10 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -65,12 +69,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        //LatLng sydney = new LatLng(37.55128, 126.970598);
-       // mMap.addMarker(new MarkerOptions().position(sydney).title(""));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-       // mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
     }
 
     public void onLastLocationButtonClicked(View view) {
@@ -88,15 +86,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
+
                 if(location!= null){
                     LatLng onLocation = new LatLng(location.getLatitude(),location.getLongitude());
                     onLocation_lost= onLocation;
 
-                    mMap.addMarker(new MarkerOptions()
-                    .position(onLocation)
-                    .title("조난자 위치"));
+                    mMap.addMarker(new MarkerOptions().position(onLocation).title("조난자 위치"));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(onLocation));
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
+                    String address = getCurrentAddress(location.getLatitude(), location.getLongitude());
+                    Toast.makeText(getApplicationContext(),address+"현재위치 \n위도 " + location.getLatitude() + "\n경도 " + location.getLongitude(),Toast.LENGTH_LONG).show();
+                    //mMap.addMarker(new MarkerOptions().position(onLocation).title("조난자 위치")).remove();
                 }
 
             }
@@ -114,18 +114,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
     public void myLocationButtonClicked(View view) {
         // Add a marker in Sydney and move the camera
         LatLng myLocation = new LatLng(36.624342, 127.465913);
         myLocation_find= myLocation;
-        mMap.addMarker(new MarkerOptions()
-                .position(myLocation)
-                .title("조난자 위치"));
-        mMap.addMarker(new MarkerOptions().position(myLocation).title(""));
+        mMap.addMarker(new MarkerOptions().position(myLocation).title("구조자 위치")).remove();
+        mMap.addMarker(new MarkerOptions().position(myLocation).title("구조자 위치"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
+        String address = getCurrentAddress(36.624342, 127.465913);
+        Toast.makeText(getApplicationContext(),address+" "+"현재위치 \n위도 " + 36.624342 + "\n경도 " + 36.624342,Toast.LENGTH_LONG).show();
     }
+
     public double polyline_meter(){
 
         double earthRadius = 3958.75;
@@ -161,5 +161,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Toast.makeText(this, "직선 거리는"+ polyline1.getTag().toString()+"미터 입니다.",
                 Toast.LENGTH_SHORT).show();
+    }
+
+    public String getCurrentAddress( double latitude, double longitude) {
+
+        //지오코더... GPS를 주소로 변환
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        List<Address> addresses;
+
+        try {
+
+            addresses = geocoder.getFromLocation(
+                    latitude,
+                    longitude,
+                    7);
+        } catch (IOException ioException) {
+            //네트워크 문제
+            Toast.makeText(this, "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
+            return "지오코더 서비스 사용불가";
+        } catch (IllegalArgumentException illegalArgumentException) {
+            Toast.makeText(this, "잘못된 GPS 좌표", Toast.LENGTH_LONG).show();
+            return "잘못된 GPS 좌표";
+
+        }
+
+
+
+        if (addresses == null || addresses.size() == 0) {
+            Toast.makeText(this, "주소 미발견", Toast.LENGTH_LONG).show();
+            return "주소 미발견";
+
+        }
+
+        Address address = addresses.get(0);
+        return address.getAddressLine(0).toString()+"\n";
+
     }
 }
