@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:onClick="onLastLocationButtonClicked"
-        android:text="조난자 위치" />
+        android:text="구조자 위치" />
 
     <Button
         android:id="@+id/myLocation_button"
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/onLast_button"
         android:onClick="myLocationButtonClicked"
-        android:text="구조자 위치" />
+        android:text="조난자 위치" />
     <Button
         android:id="@+id/Poly_line"
         android:layout_width="wrap_content"

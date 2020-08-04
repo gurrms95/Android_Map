@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.Dash;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polyline;
@@ -41,6 +42,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FusedLocationProviderClient mFusedLocationClient;
     private LatLng myLocation_find;
     private LatLng onLocation_lost;
+    private Marker marker = null;
 
     private static final PatternItem DOT = new Dot();
     private static final List<PatternItem> PATTERN_POLYLINE_DOTTED = Arrays.asList(DOT);
@@ -91,12 +93,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     LatLng onLocation = new LatLng(location.getLatitude(),location.getLongitude());
                     onLocation_lost= onLocation;
 
-                    mMap.addMarker(new MarkerOptions().position(onLocation).title("조난자 위치"));
+                    if(marker == null){
+                        marker= mMap.addMarker(new MarkerOptions().position(onLocation).title("조난자 위치"));
+                    }
+                    else{
+                        marker.remove();
+                        marker= mMap.addMarker(new MarkerOptions().position(onLocation).title("조난자 위치"));
+                    }
+
+
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(onLocation));
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
                     String address = getCurrentAddress(location.getLatitude(), location.getLongitude());
                     Toast.makeText(getApplicationContext(),address+"현재위치 \n위도 " + location.getLatitude() + "\n경도 " + location.getLongitude(),Toast.LENGTH_LONG).show();
-                    //mMap.addMarker(new MarkerOptions().position(onLocation).title("조난자 위치")).remove();
                 }
 
             }
@@ -123,7 +132,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
         String address = getCurrentAddress(36.624342, 127.465913);
-        Toast.makeText(getApplicationContext(),address+" "+"현재위치 \n위도 " + 36.624342 + "\n경도 " + 36.624342,Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(),address+" "+"현재위치 \n위도 " + 36.624342 + "\n경도 " + 127.465913,Toast.LENGTH_LONG).show();
     }
 
     public double polyline_meter(){
