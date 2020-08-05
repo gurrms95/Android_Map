@@ -5,12 +5,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -35,6 +39,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import app.akexorcist.bluetotohspp.library.BluetoothSPP;
+import app.akexorcist.bluetotohspp.library.BluetoothState;
+import app.akexorcist.bluetotohspp.library.DeviceList;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private static final int REQUEST_CODE_PERMISSIONS = 1000;
@@ -43,21 +51,86 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng myLocation_find;
     private LatLng onLocation_lost;
     private Marker marker = null;
+    private Marker marker2 = null;
+    private Polyline polyline1=null;
 
     private static final PatternItem DOT = new Dot();
     private static final List<PatternItem> PATTERN_POLYLINE_DOTTED = Arrays.asList(DOT);
+
+    private double latitude;
+    private double longtitude;
+
+    private BluetoothSPP bt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        bt = new BluetoothSPP(this); //Initializing
+
+        if (!bt.isBluetoothAvailable()) { //블루투스 사용 불가
+            Toast.makeText(getApplicationContext()
+                    , "Bluetooth is not available"
+                    , Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+        bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() { //데이터 수신
+            public void onDataReceived(byte[] data, String message) {
+                String[] f_message = message.split(" ");
+                String sdata = f_message[1];
+                String[] s_message = sdata.split(",");
+                if(f_message[0]=="INVALID"){
+                    Toast.makeText(MapsActivity.this, "위치 데이터가 없습니다.", Toast.LENGTH_SHORT).show();
+                }
+                latitude = Double.parseDouble(s_message[0]);
+                longtitude = Double.parseDouble(s_message[1]);
+
+                Toast.makeText(MapsActivity.this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        bt.setBluetoothConnectionListener(new BluetoothSPP.BluetoothConnectionListener() { //연결됐을 때
+            public void onDeviceConnected(String name, String address) {
+                Toast.makeText(getApplicationContext()
+                        , "Connected to " + name + "\n" + address
+                        , Toast.LENGTH_SHORT).show();
+            }
+
+            public void onDeviceDisconnected() { //연결해제
+                Toast.makeText(getApplicationContext()
+                        , "Connection lost", Toast.LENGTH_SHORT).show();
+            }
+
+            public void onDeviceConnectionFailed() { //연결실패
+                Toast.makeText(getApplicationContext()
+                        , "Unable to connect", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        Button btnConnect = findViewById(R.id.btnConnect); //연결시도
+        btnConnect.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (bt.getServiceState() == BluetoothState.STATE_CONNECTED) {
+                    bt.disconnect();
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), DeviceList.class);
+                    startActivityForResult(intent, BluetoothState.REQUEST_CONNECT_DEVICE);
+                }
+            }
+        });
+
     }
+
+
+
 
     /**
      * Manipulates the map once available.
@@ -94,11 +167,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     onLocation_lost= onLocation;
 
                     if(marker == null){
-                        marker= mMap.addMarker(new MarkerOptions().position(onLocation).title("조난자 위치"));
+                        marker= mMap.addMarker(new MarkerOptions().position(onLocation).title("구조자 위치"));
                     }
                     else{
                         marker.remove();
-                        marker= mMap.addMarker(new MarkerOptions().position(onLocation).title("조난자 위치"));
+                        marker= mMap.addMarker(new MarkerOptions().position(onLocation).title("구조자 위치"));
                     }
 
 
@@ -125,14 +198,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void myLocationButtonClicked(View view) {
         // Add a marker in Sydney and move the camera
-        LatLng myLocation = new LatLng(36.624342, 127.465913);
+
+        LatLng myLocation = new LatLng(latitude, longtitude);
         myLocation_find= myLocation;
-        mMap.addMarker(new MarkerOptions().position(myLocation).title("구조자 위치")).remove();
-        mMap.addMarker(new MarkerOptions().position(myLocation).title("구조자 위치"));
+        if(marker2==null) {
+            marker2=mMap.addMarker(new MarkerOptions().position(myLocation).title("조난자 위치"));
+        }
+        else{
+            marker2.remove();
+            marker2=mMap.addMarker(new MarkerOptions().position(myLocation).title("조난자 위치"));
+        }
+
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
-        String address = getCurrentAddress(36.624342, 127.465913);
-        Toast.makeText(getApplicationContext(),address+" "+"현재위치 \n위도 " + 36.624342 + "\n경도 " + 127.465913,Toast.LENGTH_LONG).show();
+        String address = getCurrentAddress(latitude, longtitude);
+        Toast.makeText(getApplicationContext(),address+" "+"현재위치 \n위도 " + latitude + "\n경도 " + longtitude,Toast.LENGTH_LONG).show();
     }
 
     public double polyline_meter(){
@@ -152,12 +232,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double distance = polyline_meter();
         String meter = String.format("%.2f", distance);
 
-        Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
-                .clickable(true)
-                .add(
-                        new LatLng(myLocation_find.latitude, myLocation_find.longitude),
-                        new LatLng(onLocation_lost.latitude, onLocation_lost.longitude)));
-
+        if(polyline1==null) {
+            polyline1 = mMap.addPolyline(new PolylineOptions()
+                    .clickable(true)
+                    .add(
+                            new LatLng(myLocation_find.latitude, myLocation_find.longitude),
+                            new LatLng(onLocation_lost.latitude, onLocation_lost.longitude)));
+        }
+        else{
+            polyline1.remove();
+            polyline1 = mMap.addPolyline(new PolylineOptions()
+                    .clickable(true)
+                    .add(
+                            new LatLng(myLocation_find.latitude, myLocation_find.longitude),
+                            new LatLng(onLocation_lost.latitude, onLocation_lost.longitude)));
+        }
         polyline1.setTag(meter);
 
         // Flip from solid stroke to dotted stroke pattern.
@@ -206,5 +295,54 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Address address = addresses.get(0);
         return address.getAddressLine(0).toString()+"\n";
 
+    }
+
+
+    public void onDestroy() {
+        super.onDestroy();
+        bt.stopService(); //블루투스 중지
+    }
+
+    public void onStart() {
+        super.onStart();
+        if (!bt.isBluetoothEnabled()) { //
+            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(intent, BluetoothState.REQUEST_ENABLE_BT);
+        } else {
+            if (!bt.isServiceAvailable()) {
+                bt.setupService();
+                bt.startService(BluetoothState.DEVICE_OTHER); //DEVICE_ANDROID는 안드로이드 기기 끼리
+                setup();
+            }
+        }
+    }
+
+    public void setup() {
+        Button btnSend = findViewById(R.id.btnSend); //데이터 전송
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                bt.send("Text", true);
+            }
+        });
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == BluetoothState.REQUEST_CONNECT_DEVICE) {
+            if (resultCode == Activity.RESULT_OK)
+                bt.connect(data);
+        } else if (requestCode == BluetoothState.REQUEST_ENABLE_BT) {
+            if (resultCode == Activity.RESULT_OK) {
+                bt.setupService();
+                bt.startService(BluetoothState.DEVICE_OTHER);
+                setup();
+            } else {
+                Toast.makeText(getApplicationContext()
+                        , "Bluetooth was not enabled."
+                        , Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
     }
 }
