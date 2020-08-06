@@ -84,16 +84,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         bt.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() { //데이터 수신
             public void onDataReceived(byte[] data, String message) {
-                String[] f_message = message.split(" ");
+                String[] f_message = message.split(":");
                 String sdata = f_message[1];
                 String[] s_message = sdata.split(",");
-                if(f_message[0]=="INVALID"){
-                    Toast.makeText(MapsActivity.this, "위치 데이터가 없습니다.", Toast.LENGTH_SHORT).show();
-                }
-                latitude = Double.parseDouble(s_message[0]);
-                longtitude = Double.parseDouble(s_message[1]);
 
-                Toast.makeText(MapsActivity.this, message, Toast.LENGTH_SHORT).show();
+//                System.out.println("데이터확인중!!!!!!!!!!!!!!!@@@@@@@@@@@@@@@@"+sdata);
+
+                if(!sdata.equals("INVALID")) {
+                     latitude = Double.parseDouble(s_message[0]);
+                     longtitude = Double.parseDouble(s_message[1]);
+
+                    LatLng myLocation = new LatLng(latitude, longtitude);
+                    myLocation_find = myLocation;
+                    if (marker2 == null) {
+                        marker2 = mMap.addMarker(new MarkerOptions().position(myLocation).title("조난자"));
+                    } else {
+                        marker2.remove();
+                        marker2 = mMap.addMarker(new MarkerOptions().position(myLocation).title("조난자"));
+                    }
+
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(17.0f));
+                    String address = getCurrentAddress(latitude, longtitude);
+                    //Toast.makeText(getApplicationContext(),address+" "+"현재위치 \n위도 " + latitude + "\n경도 " + longtitude,Toast.LENGTH_LONG).show();
+
+                    //Toast.makeText(MapsActivity.this, "됨", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(MapsActivity.this, "위치 데이터가 없습니다", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -167,11 +186,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     onLocation_lost= onLocation;
 
                     if(marker == null){
-                        marker= mMap.addMarker(new MarkerOptions().position(onLocation).title("구조자 위치"));
+                        marker= mMap.addMarker(new MarkerOptions().position(onLocation).title("구조자"));
                     }
                     else{
                         marker.remove();
-                        marker= mMap.addMarker(new MarkerOptions().position(onLocation).title("구조자 위치"));
+                        marker= mMap.addMarker(new MarkerOptions().position(onLocation).title("구조자"));
                     }
 
 
