@@ -5,14 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-
     <Button
         android:id="@+id/onLast_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:onClick="onLastLocationButtonClicked"
         android:text="구조자 위치" />
 
     <Button
@@ -20,42 +17,41 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/onLast_button"
-        android:onClick="myLocationButtonClicked"
         android:text="조난자 위치" />
+
     <Button
         android:id="@+id/Poly_line"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/myLocation_button"
-        android:onClick="polylineButtonClicked"
         android:text="직선 거리" />
-    <Button
-        android:id="@+id/btnConnect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="연결"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_below="@id/Poly_line"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btnSend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="보내기"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_below="@id/btnConnect"
-        app:layout_constraintTop_toBottomOf="@+id/btnConnect" />
+<!--    <Button-->
+<!--        android:id="@+id/btnConnect"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="연결"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        android:layout_below="@id/Poly_line"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+<!--    <Button-->
+<!--        android:id="@+id/btnSend"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:text="보내기"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        android:layout_below="@id/btnConnect"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/btnConnect" />-->
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/MapView_Map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MapsActivity" />
+        />
 
 </RelativeLayout>

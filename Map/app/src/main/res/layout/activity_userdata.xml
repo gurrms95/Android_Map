@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_marginTop="30dp"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="조난자 정보"
+        />
+
+    <Button
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="Request User Data"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/button_background"
+        android:id="@+id/Button_Request_User_Data"
+        />
+    <LinearLayout
+        android:background="@drawable/button_background"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <EditText
+            android:id="@+id/EditText_Name"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:background="@null"
+            android:hint="이름" />
+
+        <LinearLayout
+            android:background="@drawable/button_background"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/button_background"
+                android:layout_marginTop="20dp"
+                android:weightSum="1"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:background="@drawable/button_background"
+                    android:id="@+id/Button_Man"
+                    android:gravity="center"
+                    android:layout_weight="0.5"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textSize="15sp"
+                    android:text="남자"
+                    />
+                <Button
+                    android:background="@drawable/button_background"
+                    android:id="@+id/Button_Girl"
+                    android:gravity="center"
+                    android:layout_weight="0.5"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textSize="15sp"
+                    android:text="여자"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:gravity="center"
+                android:layout_weight="0.15"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:text="생일"/>
+
+            <EditText
+                android:inputType="number"
+                android:digits="0123456789"
+                android:id="@+id/EditText_Year"
+                android:maxLength="4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.27"
+                android:hint="생년월일(4자리)"
+                android:textSize="12sp"
+                android:background="@null"
+                />
+
+            <Spinner
+                android:entries="@array/spinner_array"
+                android:layout_weight="0.29"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/Spinner_Month"/>
+
+            <Spinner
+                android:entries="@array/spinner_array"
+                android:layout_weight="0.29"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/Spinner_Day"/>
+
+
+        </LinearLayout>
+
+
+        <EditText
+            android:id="@+id/EditText_Address"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:hint="주소"
+            android:textSize="15sp"
+            android:background="@null"
+            />
+
+        <EditText
+            android:inputType="number"
+            android:digits="0123456789"
+            android:id="@+id/EditText_Phone"
+            android:maxLength="11"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:hint="휴대전화번호"
+            android:textSize="15sp"
+            android:background="@null"
+            />
+
+        <EditText
+            android:inputType="number"
+            android:digits="0123456789"
+            android:id="@+id/EditText_Phone_Second"
+            android:maxLength="11"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:hint="보호자 전화번호"
+            android:textSize="15sp"
+            android:background="@null"
+            />
+
+        <EditText
+            android:inputType="number"
+            android:digits="0123456789"
+            android:id="@+id/EditText_Phone_Third"
+            android:maxLength="11"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:hint="보호자 전화번호"
+            android:textSize="15sp"
+            android:background="@null"
+            />
+
+    </LinearLayout>
+
+
+
+    <Button
+        android:id="@+id/TextView_Complete"
+        android:background="@drawable/button_background"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="Send"/>
+
+    <Button
+        android:id="@+id/Button_Erase"
+        android:background="@drawable/button_background"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="Erase Data"/>
+
+</LinearLayout>
